@@ -22,8 +22,6 @@ describe('LootBox', () => {
         rewarder = await blockchain.treasury('rewarder');
         alice = await blockchain.treasury('alice');
 
-        // console.log("REWARDER: ", rewarder.address.toString(), "BALANCE: ", await rewarder.getBalance());
-
         const deployResult = await lootBox.send(
             deployer.getSender(),
             {
@@ -81,7 +79,8 @@ describe('LootBox', () => {
         console.log("REWARDER ADDRESS: ", rewarder.address);
         console.log("ALICE ADDRESS: ", alice.address);
 
-        console.log("ALICE BALANCE BEFORE: ", await alice.getBalance());
+        const aliceBalanceInitial = await alice.getBalance();
+        console.log("ALICE BALANCE BEFORE: ", aliceBalanceInitial);
 
         await lootBox.send(
             deployer.getSender(),
@@ -118,7 +117,10 @@ describe('LootBox', () => {
             }
         );
 
-        console.log("ALICE REWARD: ", await lootBox.getUserReward(alice.address));
+        const aliceReward = await lootBox.getUserReward(alice.address);
+        expect(aliceReward).not.toBe(null);
+
+        console.log("ALICE REWARD: ", aliceReward!!);
 
         console.log("LOOT BALANCE: ", await lootBox.getBalance());
 
@@ -128,9 +130,30 @@ describe('LootBox', () => {
             success: true,
         });
 
-        console.log("ALICE BALANCE AFTER: ", await alice.getBalance());
-        // console.log("TXS: ", txs.transactions);
-        console.log("EVENTS: ", txs.events);
+        const aliceBalanceAfter1 = await alice.getBalance();
+        console.log("ALICE BALANCE AFTER: ", aliceBalanceAfter1);
+
+        // try to reward the same user once again
+        const txs1 = await lootBox.send(
+            rewarder.getSender(), 
+            { 
+                value: toNano('0.05'),
+                bounce: true,
+            },
+            {
+                $$type: 'RewardUser',
+                user: alice.address,
+            }
+        );
+
+        const aliceBalanceAfter2 = await alice.getBalance();
+        console.log("ALICE BALANCE AFTER: ", aliceBalanceAfter2);
+
+        // alice balance increased
+        expect(aliceBalanceAfter1).toBeGreaterThan(aliceBalanceInitial);
+
+        // second time alice balance not changed
+        expect(aliceBalanceAfter1).toBe(aliceBalanceAfter2);
     })
 });
 
