@@ -75,14 +75,15 @@ contract LootBox with Deployable, Ownable {
 
         let leftBalance: Int = myBalance() - self.minKeep - context().value;
         require(leftBalance >= self.maxReward, "LB:BALANCE_NOT_ENOUGH");
-
-        let amount: Int = random(leftBalance - self.minReward, leftBalance - self.maxReward);
+        let _minReward: Int = min(leftBalance, self.minReward);
+        let _maxReward: Int = min(leftBalance, self.maxReward);
+        let amount: Int = random(_minReward, _maxReward);
         
         send(SendParameters{
             to: user,
             bounce: true,
             value: amount,
-            mode: SendRemainingValue + SendIgnoreErrors,
+            mode: SendIgnoreErrors,
         });
 
         self.userState.set(user, amount);
@@ -93,7 +94,7 @@ contract LootBox with Deployable, Ownable {
     }
 
     receive("Increment") {
-        dump(context().value);
+        // dump(context().value);
     }
 
     get fun userReward(user: Address): Int? { 

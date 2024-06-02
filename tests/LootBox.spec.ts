@@ -76,7 +76,11 @@ describe('LootBox', () => {
         expect((await lootBox.getRewarder()).toString()).toBe(rewarder.address.toString());
     })
 
-    it.only('should reward user', async ()=>{
+    it('should reward user', async ()=>{
+        console.log("DEPLOYER ADDRESS: ", deployer.address);
+        console.log("REWARDER ADDRESS: ", rewarder.address);
+        console.log("ALICE ADDRESS: ", alice.address);
+
         console.log("ALICE BALANCE BEFORE: ", await alice.getBalance());
 
         await lootBox.send(
@@ -106,6 +110,7 @@ describe('LootBox', () => {
         const txs = await lootBox.send(
             rewarder.getSender(), {
                 value: toNano('0.05'),
+                bounce: true,
             },
             {
                 $$type: 'RewardUser',
@@ -115,17 +120,17 @@ describe('LootBox', () => {
 
         console.log("ALICE REWARD: ", await lootBox.getUserReward(alice.address));
 
-        // expect(txs.transactions).
-        // expect(txs.transactions).toHaveTransaction({
-        //     // from: rewarder.address,
-        //     to: lootBox.address,
-        //     success: true,
-        // });
+        console.log("LOOT BALANCE: ", await lootBox.getBalance());
+
+        expect(txs.transactions).toHaveTransaction({
+            from: rewarder.address,
+            to: lootBox.address,
+            success: true,
+        });
 
         console.log("ALICE BALANCE AFTER: ", await alice.getBalance());
         // console.log("TXS: ", txs.transactions);
         console.log("EVENTS: ", txs.events);
-        console.log("RESULT: ", txs.result);
     })
 });
 
