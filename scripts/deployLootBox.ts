@@ -7,7 +7,9 @@ export async function run(provider: NetworkProvider) {
     const minReward = toNano('0.005');
     const maxReward = toNano('0.006');
 
-    const lootBox = provider.open(await LootBox.fromInit(minKeep, minReward, maxReward));
+    const contract = await LootBox.fromInit(minKeep, minReward, maxReward);
+    console.log("CONTRACT ADDRESS: ", contract.address);
+    const lootBox = provider.open(contract);
 
     await lootBox.send(
         provider.sender(),
