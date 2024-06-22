@@ -2,6 +2,7 @@
 struct Recipients {
   addresses: map<Int as uint256, Address>;
   length: Int as uint256 = 0;
+  
 }
 
 extends fun deriveLength(self: Recipients): Int {

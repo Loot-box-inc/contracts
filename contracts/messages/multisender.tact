@@ -1,9 +1,8 @@
 import "../structures/multisend";
 
-message(0x445) MultiSend {
+message(0x445) MultiSendNotification {
   query_id: Int as uint64;
-  jetton: Address;
-  recipients: Recipients;
+  addresses_amounts: map<Address, Int as coins>;
 }
 
 message(0x7362d09c) JettonTransferNotification {
