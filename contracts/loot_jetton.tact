@@ -26,12 +26,6 @@ contract LootJetton with Jetton {
         self.mint(msg.receiver, msg.amount, self.owner); // (to, amount, response_destination)
     }
 
-    receive("Mint: 100") { // Public Minting
-        let ctx: Context = context();
-        require(self.mintable, "Can't Mint Anymore");
-        self.mint(ctx.sender, 100, self.owner);
-    }
-
     receive("Owner: MintClose") {
         let ctx: Context = context();
         require(ctx.sender == self.owner, "Not Owner");

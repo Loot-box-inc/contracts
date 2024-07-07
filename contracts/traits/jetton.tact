@@ -80,7 +80,7 @@ trait Jetton with Ownable {
         return JettonData{ 
             totalSupply: self.totalSupply, 
             mintable: self.mintable, 
-            owner: self.owner, 
+            owner: self.owner,
             content: self.content, 
             walletCode: code
         };
