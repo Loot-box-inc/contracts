@@ -1,61 +1,14 @@
 import "@stdlib/deploy";
 import "@stdlib/ownable";
 
-message RewardUser {
-    user: Address;
-}
-
-message RewarderAssigned {
-    oldRewarder: Address;
-    newRewarder: Address;
-}
-
-message UserRewarded {
-    user: Address;
-    amount: Int as coins;
-}
-
-message SetRewarder {
-    rewarder: Address;
-}
-
 contract LootBox with Deployable, Ownable {
     owner: Address;
-    rewarder: Address;
-    userState: map<Address, Int>;
-    minKeep: Int as coins;
-    minReward: Int as coins;
-    maxReward: Int as coins;
 
-
-    init(_minKeep: Int, _minReward: Int, _maxReward: Int) {
+    init() {
         self.owner = sender();
-        self.minKeep = _minKeep;
-        self.rewarder = sender();
-        self.minReward = _minReward;
-        self.maxReward = _maxReward;
-        self.userState = emptyMap();
     }
 
-    get fun rewarder(): Address {
-        return self.rewarder;
-    }
-
-    get fun minKeep(): Int {
-        return self.minKeep;
-    }
-
-    get fun minReward(): Int {
-        return self.minReward;
-    }
-
-    get fun maxReward(): Int {
-        return self.maxReward;
-    }
-
-    get fun balance(): Int {
-        return myBalance();
-    }
+   
 
     receive(msg: SetRewarder) {
         self.requireOwner();
@@ -93,11 +46,8 @@ contract LootBox with Deployable, Ownable {
         self.notify("Rewarded".asComment());
     }
 
-    receive("Increment") {
-        // dump(context().value);
+    get fun balance(): Int {
+        return myBalance();
     }
 
-    get fun userReward(user: Address): Int? { 
-        return self.userState.get(user);
-    }
 }
